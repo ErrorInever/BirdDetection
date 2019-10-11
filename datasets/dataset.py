@@ -10,7 +10,7 @@ from torchvision import transforms
 
 
 class Bird(Dataset):
-
+    """custom dataset"""
     def __init__(self, data_dir, train=False):
         """
         :param data_dir: directory of dataset
