@@ -57,11 +57,9 @@ class Bird(Dataset):
 
             # define augmentation
             # applies the given augmenter in 50% of all cases
-            sometimes = lambda aug: iaa.Sometimes(0.5, aug)
+            sometimes = lambda aug: iaa.Sometimes(0.3, aug)
             sequence = iaa.Sequential([
                 iaa.Resize(size=224),
-                iaa.Fliplr(p=0.5),
-                sometimes(iaa.Snowflakes()),
                 sometimes(iaa.Salt(p=0.10)),
                 sometimes(iaa.Multiply((0.25, 0.50)))
             ])
@@ -75,7 +73,7 @@ class Bird(Dataset):
             # image transform
             transform = self.img_transform
             img = sequence.augment_image(img)
-            img = transform(img)
+            img = transform(img.copy())
 
         return img, target
 
