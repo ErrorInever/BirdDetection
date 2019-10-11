@@ -6,7 +6,7 @@ from lib.vision.references.detection import utils
 from tensorboardX import SummaryWriter
 
 
-def train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq, output_dir, tensorboard=True):
+def train_one_epoch(model, optimizer, data_loader, device, epoch, output_dir, tensorboard=True, print_freq=10):
     """
     defining one epoch of train
     :param model: nn.Module
