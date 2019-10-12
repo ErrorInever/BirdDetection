@@ -8,15 +8,15 @@ from utils.functions import collate_fn
 from utils.config import cfg
 from model.faster_rcnn import get_pretrained_faster_rcnn
 from model.train import train_one_epoch
-from lib.vision.references.detection.engine import evaluate
+from model.evaluate import evaluate
 
 if __name__ == '__main__':
     # faster rcnn train only GPU
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     if device != 'cuda':
         raise Exception('cuda not available')
-    data_dir = str(input('data dir'))
-    output_dir = 'output'
+    data_dir = str(input('path to data dir'))
+    output_dir = str(input('path to output dir'))
     # define datasets
     print('loading data')
     train_dataset = Bird(data_dir, train=True)
@@ -45,11 +45,12 @@ if __name__ == '__main__':
     start_time = time.time()
     for epoch in range(num_epochs):
         # train for one epoch
-        train_one_epoch(model, optimizer, train_dataloader, device, epoch, output_dir, tensorboard=True, print_freq=2)
+        train_one_epoch(model, optimizer, scheduler, train_dataloader, device, epoch, output_dir,
+                        tensorboard=True, print_freq=2)
         # update learning rate
         scheduler.step()
-        # evaluate after every epoch
-        evaluate(model, test_dataloader, device)
+        # evaluate after each epoch
+        evaluate(model, test_dataloader, device=device)
 
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
