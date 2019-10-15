@@ -22,6 +22,7 @@ def _get_iou_types(model):
 
 @torch.no_grad()
 def evaluate(model, data_loader, device):
+    # FIXME doen't work for bbs
     n_threads = torch.get_num_threads()
     torch.set_num_threads(1)
     cpu_device = torch.device("cpu")

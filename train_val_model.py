@@ -50,7 +50,8 @@ if __name__ == '__main__':
         # update learning rate
         scheduler.step()
         # evaluate after each epoch
-        evaluate(model, test_dataloader, device=device)
+        # FIXME evaluate does not work
+        #evaluate(model, test_dataloader, device=device)
 
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))

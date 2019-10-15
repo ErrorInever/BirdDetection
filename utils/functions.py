@@ -44,3 +44,7 @@ def show_batch(img_tensor, target):
 def collate_fn(batch):
     """ create a list of dictionary from batch """
     return tuple(zip(*batch))
+
+
+def test_collate_fn(batch):
+    return tuple(*batch)

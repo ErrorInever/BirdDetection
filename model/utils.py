@@ -9,13 +9,13 @@ def save_all_model(model, filepath):
 
 
 def load_model(model, filepath):
-    """load model for inference"""
+    """load model for test"""
     model.load_state_dict(torch.load(filepath))
     model.eval()
 
 
 def save_model(model, filepath):
-    """save model for inference"""
+    """save model for test"""
     torch.save(model.state_dict(), filepath)
 
 
