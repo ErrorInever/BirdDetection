@@ -4,7 +4,7 @@ import torch
 from datetime import datetime
 from test.images import Images
 from torch.utils.data import DataLoader
-from utils.functions import test_collate_fn
+from test.utils import test_collate_fn, frame_to_tensor
 from termcolor import colored
 from tqdm import tqdm
 
@@ -96,10 +96,9 @@ def detect_on_images(model, device, img_dir, outdir):
                                                                      (end_time - start_time).total_seconds()), 'green'))
 
 
-def detect_on_video(model, device, video_dir, outdir):
+def detect_on_video(model, device, video_dir, outdir, threshhold):
     cap = cv2.VideoCapture(video_dir)
     save_path = os.path.join(outdir, 'detection_{}.avi'.format(datetime.today().strftime('%Y-%m-%d')))
-
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     width, height = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = cap.get(cv2.CAP_PROP_FPS)
@@ -112,9 +111,22 @@ def detect_on_video(model, device, video_dir, outdir):
         flag, frame = cap.read()
         read_frames += 1
         if flag:
-            pass
+            frame = frame_to_tensor(frame, device)
+            detection = model(frame)
+            detection = suppression_threshold(detection, threshhold)
+            if len(detection) != 0:
+                frame = draw_box(frame, detection)
 
-        if cv2.waitKey(1) % 0xFF == ord('q'):
+            out.write(frame)
+            if read_frames % 30 == 0:
+                print('Number of frames processed {}'.format(read_frames), flush=True)
+
+            if cv2.waitKey(1) % 0xFF == ord('q'):
+                break
+        else:
             break
-
+    print('Detection finished in {}'.format(start_time - datetime.now()))
+    print('Total frames:', read_frames)
     cap.release()
+    out.release()
+    print('Detected video saved to ' + outdir)
